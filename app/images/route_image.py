@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
 from sqlalchemy.orm import Session
 
-from amazon import s3_client
+from amazon import s3_client, create_presigned_url, generate_s3_key
 from core.config import settings
 from utils.crud import get_images, get_image, delete_image, create_image
 from utils.schemas import Image
