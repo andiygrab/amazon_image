@@ -1,10 +1,8 @@
 from datetime import datetime
 
-from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from utils.schemas import UserCreate
-from amazon import upload_file_to_bucket
 from core.hashing import Hasher
 from db import models
 from db.models import datetime_to_unix_time, User
@@ -20,14 +18,13 @@ def get_images(db: Session, skip: int = 0, limit: int = 100) -> list[models.Imag
     ).offset(skip).limit(limit).all()
 
 
-def create_image(db: Session, file: UploadFile, user: User):
-    s3_key = upload_file_to_bucket(file)
+def create_image(db: Session, filename: str, user: User):
     upload_date = datetime_to_unix_time(datetime.now())
 
     db_image = models.Image(
         user_id=user.id,
         upload_date=upload_date,
-        image_url=s3_key,
+        image_url=filename,
     )
     db.add(db_image)
     db.commit()

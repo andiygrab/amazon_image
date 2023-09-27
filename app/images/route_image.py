@@ -52,10 +52,13 @@ async def delete_image_api(
     return HTTPException(status_code=200, detail="Image deleted")
 
 
-@router.post("/images/", response_model=Image)
-async def create_image_api(
-        file: UploadFile = File(...),
+@router.post("/gen_presigned_url/")
+async def generate_presigned_url(
+        filename: str,
         db: Session = Depends(get_db),
         current_user: User = Depends(get_current_user)
-):
-    return create_image(db, file, current_user)
+        ):
+    create_image(db, filename, current_user)
+    # here we add our information about image to db, just created time, user_id and filename that the key for obj
+    return {"presigned_url": create_presigned_url(filename)}
+
